@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../database/db_helper.dart';
 import '../models/expense.dart';
+import '../services/app_services.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -13,8 +14,30 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   String title = '';
   double amount = 0;
-  String category = categories[0]['name'];
+  String category = 'Other';
   DateTime selectedDate = DateTime.now();
+  bool suggestingCategory = false;
+
+  Future<void> suggestCategory() async {
+    if (title.trim().isEmpty) return;
+    setState(() => suggestingCategory = true);
+    try {
+      final suggestion = await AppServices.ai.categorize(
+        title: title,
+        type: 'expense',
+        amount: amount,
+      );
+      if (mounted) setState(() => category = suggestion.category);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Category suggestion is unavailable.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => suggestingCategory = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +53,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 decoration: const InputDecoration(labelText: 'Title'),
                 onChanged: (val) => title = val,
                 validator: (val) => val!.isEmpty ? 'Enter title' : null,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: suggestingCategory ? null : suggestCategory,
+                  icon: suggestingCategory
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Icon(Icons.auto_awesome),
+                  label: const Text('Suggest category'),
+                ),
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Amount'),

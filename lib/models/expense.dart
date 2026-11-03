@@ -34,7 +34,7 @@ class Expense {
   }
 }
 
-// Categories with icons
+// Categories with icons. Keep this list closed so AI cannot create categories.
 final List<Map<String, dynamic>> categories = [
   {'name': 'Food', 'icon': '🍔'},
   {'name': 'Transport', 'icon': '🚗'},
@@ -42,5 +42,14 @@ final List<Map<String, dynamic>> categories = [
   {'name': 'Entertainment', 'icon': '🎬'},
   {'name': 'Bills', 'icon': '💡'},
   {'name': 'Health', 'icon': '🏥'},
+  {'name': 'Groceries', 'icon': '🛒'},
+  {'name': 'Subscription', 'icon': '🔁'},
+  {'name': 'Salary', 'icon': '💼'},
+  {'name': 'Freelance', 'icon': '🧑‍💻'},
   {'name': 'Other', 'icon': '📦'},
 ];
+
+const validTransactionTypes = {'income', 'expense'};
+
+bool isValidCategory(String value) =>
+    categories.any((category) => category['name'] == value);

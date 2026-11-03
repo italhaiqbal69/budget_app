@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const BudgetApp());
@@ -13,11 +14,7 @@ class BudgetApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'BudgetBud',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(),
       home: const HomeScreen(),
     );
   }
